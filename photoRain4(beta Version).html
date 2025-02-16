@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Photo Rain with Spin Toggle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+        }
+
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        #controls label {
+            display: block;
+            margin: 5px 0;
+        }
+
+        #controls button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #controls button:hover {
+            background: #0056b3;
+        }
+
+        .photo {
+            position: absolute;
+            top: -100px;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg) scale(0.5);
+            }
+        }
+
+        @keyframes fall-no-spin {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <label for="speed">Speed:</label>
+        <input type="range" id="speed" min="1" max="10" value="5">
+        <label for="density">Density:</label>
+        <input type="range" id="density" min="1" max="10" value="5">
+        <button id="toggle-spin">Toggle Spin Effect</button>
+    </div>
+    <div id="photo-container"></div>
+
+    <script>
+        const photoContainer = document.getElementById('photo-container');
+        const speedControl = document.getElementById('speed');
+        const densityControl = document.getElementById('density');
+        const toggleSpinButton = document.getElementById('toggle-spin');
+        const photoUrls = [
+            './images/grandy8.jpg',
+            './images/grandy7.jpg',
+            './images/grandy6.jpg',
+            './images/grandy6.jpg',
+            './images/grandy5.jpg',
+            './images/grandy5.jpg',
+            './images/grandy4.jpg',
+        ];
+
+        let speed = 5;
+        let density = 5;
+        let spinEnabled = true;
+
+        function createPhoto() {
+            const img = document.createElement('img');
+            img.src = photoUrls[Math.floor(Math.random() * photoUrls.length)];
+            img.classList.add('photo');
+            img.style.left = Math.random() * window.innerWidth + 'px';
+            img.style.animationDuration = (10 - speed) + 2 + 's'; // Faster for higher speed values
+
+            if (spinEnabled) {
+                img.style.animationName = 'fall';
+            } else {
+                img.style.animationName = 'fall-no-spin';
+            }
+
+            photoContainer.appendChild(img);
+
+            setTimeout(() => {
+                img.remove();
+            }, (10 - speed + 2) * 1000); // Remove photo after animation ends
+        }
+
+        function startRain() {
+            const interval = 1000 / density; // Adjust density
+            setInterval(createPhoto, interval);
+        }
+
+        speedControl.addEventListener('input', () => {
+            speed = speedControl.value;
+        });
+
+        densityControl.addEventListener('input', () => {
+            density = densityControl.value;
+            clearInterval(rainInterval);
+            startRain();
+        });
+
+        toggleSpinButton.addEventListener('click', () => {
+            spinEnabled = !spinEnabled;
+            toggleSpinButton.textContent = spinEnabled ? 'Disable Spin Effect' : 'Enable Spin Effect';
+        });
+
+        let rainInterval = startRain();
+    </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidden Music Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('./images/randomGirl.jpg') no-repeat center center/cover;
+            cursor: pointer;
+        }
+
+        #audioPlayer {
+            display: none; /* Hide the audio player */
+        }
+
+        .message {
+            font-family: Arial, sans-serif;
+            color: #666;
+            text-align: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .message.show {
+            opacity: 1;
+        }
+
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+
+        .status-indicator.playing {
+            background: #4CAF50;
+        }
+
+        .status-indicator.paused {
+            background: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hidden audio player -->
+    <audio id="audioPlayer" loop>
+        <source src="./images/motaBilla.opus" type="audio/ogg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Status indicator -->
+    <div class="status-indicator" id="statusIndicator"></div>
+
+    <!-- Click message -->
+    <div class="message" id="message">
+        Click anywhere to toggle music
+    </div>
+
+    <script>
+        const audio = document.getElementById('audioPlayer');
+        const message = document.getElementById('message');
+        const statusIndicator = document.getElementById('statusIndicator');
+        let isPlaying = false;
+
+        // Function to attempt autoplay
+        function attemptAutoplay() {
+            audio.play()
+                .then(() => {
+                    isPlaying = true;
+                    statusIndicator.classList.add('playing');
+                    statusIndicator.classList.remove('paused');
+                })
+                .catch((error) => {
+                    // Autoplay was prevented
+                    console.log("Autoplay prevented. Waiting for user interaction.");
+                    message.classList.add('show');
+                    statusIndicator.classList.add('paused');
+                });
+        }
+
+        // Attempt autoplay when the page loads
+        window.onload = attemptAutoplay;
+
+        // Click anywhere to play/pause
+        document.addEventListener('click', function () {
+            if (isPlaying) {
+                audio.pause();
+                statusIndicator.classList.remove('playing');
+                statusIndicator.classList.add('paused');
+            } else {
+                audio.play();
+                statusIndicator.classList.add('playing');
+                statusIndicator.classList.remove('paused');
+            }
+            isPlaying = !isPlaying;
+        });
+    </script>
+</body>
+</html>

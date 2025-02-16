@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrolling Love Messages</title>
+    <link rel="stylesheet" href="./style.css">
+    <style>
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            position: absolute;  /* Changed back to absolute */
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .heart-button {
+            font-size: 24px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: red;
+            color: white;
+            font-weight: bold;
+            animation: beat 1s infinite;
+        }
+        @keyframes beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .final {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio element -->
+    <audio id="bgMusic" loop>
+        <source src="./images/Something Stupid (From ＂Better Call Saul＂).mp3" type="audio/mp3">
+    </audio>
+
+    <div class="section" data-bg="./images/bcs02.jpg">
+        <div class="message">Will </div>
+    </div>
+    <div class="section" data-bg="./images/bcs01.png">
+        <div class="message"> you </div>
+    </div>
+    <div class="section" data-bg="./images/bcs03.png">
+        <div class="message"> marry </div>
+    </div>
+    <div class="section" data-bg="./images/bcs04.jpg">
+        <div class="message">me? 💍</div>
+    </div>
+    <div class="section final" data-bg="./images/finalsaul.jpg">
+        <div class="button-container">
+            <button class="heart-button" onclick="window.location.href='https://www.youtube.com/watch?v=UIUjNcQwG6E'">YES!💖</button>
+            <button class="heart-button" onclick="window.location.href='./credits4.html'">NO😔</button>
+        </div>
+    </div>
+    <script src="./script.js"></script>
+    <script>
+        // Add click event listener to play music
+        document.addEventListener('click', function() {
+            const music = document.getElementById('bgMusic');
+            if (music.paused) {
+                music.play();
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>

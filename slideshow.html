@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Slideshow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+            background: #46096f;
+            color: rgb(255, 255, 255);
+        }
+
+        .slide {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 2rem;
+            scroll-snap-align: start;
+            overflow: hidden;
+        }
+
+        .container {
+            height: 100vh;
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            scroll-behavior: smooth;
+        }
+
+        .slide-content {
+            max-width: 800px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+            position: relative;
+            z-index: 2;
+        }
+
+        .slide-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-heading {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: #60a5fa;
+            text-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+        }
+
+        .slide-text {
+            font-size: 1.5rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .slide-image {
+            max-width: 600px;
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(96, 165, 250, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .slide-image:hover {
+            transform: scale(1.05);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #60a5fa, #4f46e5);
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+
+        .navigation {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: #60a5fa;
+            transform: scale(1.3);
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(96, 165, 250, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        .final-links {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .final-link {
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .final-link:hover {
+            transform: translateY(-10px);
+        }
+
+        .final-link img {
+            width: 200px;
+            height: 200px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 4px 20px rgba(96, 165, 250, 0.3);
+        }
+
+        .final-link::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: #60a5fa;
+            transition: width 0.3s ease;
+        }
+
+        .final-link:hover::after {
+            width: 100%;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(100px, 100px) rotate(90deg); }
+            50% { transform: translate(200px, 0) rotate(180deg); }
+            75% { transform: translate(100px, -100px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .slide-heading {
+                font-size: 2rem;
+            }
+            .slide-text {
+                font-size: 1.2rem;
+            }
+            .final-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+    <div class="navigation"></div>
+    <div class="container">
+        <section class="slide">
+            <div class="floating-elements"></div>
+            <div class="slide-content">
+                <h2 class="slide-heading">Welcome to the Adventure</h2>
+                <p class="slide-text">Embark on a journey through interactive storytelling and stunning visuals.</p>
+                <img src="./images/jk-1.jpg" alt="Welcome Scene" class="slide-image">
+            </div>
+        </section>
+
+        <section class="slide">
+            <div class="floating-elements"></div>
+            <div class="slide-content">
+                <h2 class="slide-heading">Discover Magic</h2>
+                <p class="slide-text">Watch as elements come to life with smooth animations and dynamic effects.</p>
+                <img src="./images/jk-2.jpg" alt="Magical Scene" class="slide-image">
+            </div>
+        </section>
+
+        <section class="slide">
+            <div class="floating-elements"></div>
+            <div class="slide-content">
+                <h2 class="slide-heading">Experience Wonder</h2>
+                <p class="slide-text">Interact with elements that respond to your presence and movement.</p>
+                <img src="./images/jk-3.jpg" alt="Wonder Scene" class="slide-image">
+            </div>
+        </section>
+
+        <section class="slide">
+            <div class="floating-elements"></div>
+            <div class="slide-content">
+                <h2 class="slide-heading">Choose Your Path</h2>
+                <p class="slide-text">Where will your journey take you next?</p>
+                <div class="final-links">
+                    <a href="page1.html" class="final-link">
+                        <img src="/api/placeholder/200/200" alt="Path One">
+                    </a>
+                    <a href="page2.html" class="final-link">
+                        <img src="/api/placeholder/200/200" alt="Path Two">
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const progressBar = document.querySelector('.progress-bar');
+            const navigation = document.querySelector('.navigation');
+            const container = document.querySelector('.container');
+            const floatingElements = document.querySelectorAll('.floating-elements');
+
+            // Create floating background elements
+            floatingElements.forEach(container => {
+                for (let i = 0; i < 5; i++) {
+                    const element = document.createElement('div');
+                    element.classList.add('floating-element');
+                    element.style.width = `${Math.random() * 100 + 50}px`;
+                    element.style.height = element.style.width;
+                    element.style.left = `${Math.random() * 100}%`;
+                    element.style.top = `${Math.random() * 100}%`;
+                    element.style.animationDelay = `${Math.random() * 5}s`;
+                    element.style.animationDuration = `${Math.random() * 10 + 15}s`;
+                    container.appendChild(element);
+                }
+            });
+
+            // Create navigation dots
+            slides.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('nav-dot');
+                dot.addEventListener('click', () => {
+                    slides[index].scrollIntoView({ behavior: 'smooth' });
+                });
+                navigation.appendChild(dot);
+            });
+
+            const navDots = document.querySelectorAll('.nav-dot');
+
+            // Handle scroll animations
+            const observerOptions = {
+                root: null,
+                threshold: 0.5,
+                rootMargin: "0px"
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.querySelector('.slide-content').classList.add('visible');
+                        const index = Array.from(slides).indexOf(entry.target);
+                        navDots.forEach((dot, i) => {
+                            dot.classList.toggle('active', i === index);
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            slides.forEach(slide => observer.observe(slide));
+
+            // Update progress bar
+            container.addEventListener('scroll', () => {
+                const totalHeight = container.scrollHeight - container.clientHeight;
+                const progress = (container.scrollTop / totalHeight) * 100;
+                progressBar.style.width = `${progress}%`;
+            });
+
+            // Add parallax effect
+            slides.forEach(slide => {
+                slide.addEventListener('mousemove', (e) => {
+                    const { clientX, clientY } = e;
+                    const { left, top, width, height } = slide.getBoundingClientRect();
+                    const x = (clientX - left) / width - 0.5;
+                    const y = (clientY - top) / height - 0.5;
+                    
+                    const content = slide.querySelector('.slide-content');
+                    content.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
+                    
+                    const floatingElements = slide.querySelectorAll('.floating-element');
+                    floatingElements.forEach(element => {
+                        const speed = parseFloat(element.style.width) / 100;
+                        element.style.transform = `translate(${x * 50 * speed}px, ${y * 50 * speed}px)`;
+                    });
+                });
+
+                slide.addEventListener('mouseleave', () => {
+                    const content = slide.querySelector('.slide-content');
+                    content.style.transform = 'translate(0, 0)';
+                    
+                    const floatingElements = slide.querySelectorAll('.floating-element');
+                    floatingElements.forEach(element => {
+                        element.style.transform = 'translate(0, 0)';
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

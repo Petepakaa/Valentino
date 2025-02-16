@@ -1,0 +1,144 @@
+/* Floating Hearts Animation */
+.floating-heart {
+    position: fixed; /* Hearts will float across the entire page */
+    font-size: 24px;
+    color: red; /* Make hearts red */
+    animation: floatUp 5s linear infinite;
+    z-index: 9999; /* Ensure hearts are above other content */
+    pointer-events: none; /* Prevent hearts from blocking clicks */
+    user-select: none; /* Prevent text selection */
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(100vh) translateX(-50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-10vh) translateX(-50%) scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* Existing CSS */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    overflow-x: hidden;
+    background-color: red;
+}
+
+.section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(255, 64, 129, 0.5); /* Fallback background */
+    opacity: 1; /* Ensure sections are visible */
+}
+
+/* Add this to the existing CSS */
+.section:last-child .message {
+    background-image: url('./images/night bridge.jpg'); /* Path to your background image */
+    background-size: cover; /* Ensure the image covers the message box */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    padding: 40px; /* Add padding to ensure text is readable */
+    border-radius: 10px; /* Optional: Add rounded corners */
+    color: white; /* Ensure text is readable on the background */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add shadow to text for better readability */
+}
+
+.message {
+    font-size: 48px;
+    font-weight: bold;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    opacity: 1; /* Ensure text is visible */
+    transform: translateY(0); /* Reset transform */
+}
+
+.fade-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 1; /* Ensure images are visible */
+    transform: scale(1); /* Reset transform */
+}
+
+#small-image {
+    width: 500px;  /* Set a specific width */
+    height: 500px; /* Set a specific height */
+  }
+
+#chotu-image {
+    width: 150px;  /* Set a specific width */
+    height: 284px; /* Set a specific height */
+  }  
+  
+
+.final button {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 50px;
+    background-color: white;
+    color: #ff4081;
+    cursor: pointer;
+    transition: transform 0.2s;
+    animation: heartbeat 1.5s infinite ease-in-out;
+}
+
+.final button:hover {
+    transform: scale(1.1);
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.2); }
+    50% { transform: scale(1); }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.master-bg {
+    background-image: url('./images/otherPlans.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.distance-bg {
+    background-image: url('./images/distance.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.light-trails {
+    background-image: url('./images/Saumya\ Cooking.gif');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.moon-shot{
+    background-image: url('./images/moonshot.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;  
+}
+
+.meteor{
+    background-image: url('./images/meteor.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;  
+}

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magical Photo Rain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-star"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>'), auto;
+        }
+
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 450px;
+            height: 220px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        #audioPlayer {
+            display: none; /* Hide the audio player */
+        }
+
+        #controls label {
+            display: block;
+            margin: 10px 0 5px;
+            font-size: 14px;
+            color: #000000;
+        }
+
+        #controls input[type="range"] {
+            width: 100%;
+            margin-bottom: 15px;
+            accent-color: #6a11cb;
+        }
+
+        #controls button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #controls button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(106, 17, 203, 0.5);
+        }
+
+        #title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: #e95858;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(-50%, -50%) translateY(0);
+            }
+            50% {
+                transform: translate(-50%, -50%) translateY(-20px);
+            }
+        }
+
+        .photo {
+            position: absolute;
+            top: -100px;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.5);
+            animation: fall linear infinite;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transition: box-shadow 0.3s;
+        }
+
+        .photo:hover {
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg) scale(0.5);
+            }
+        }
+
+        @keyframes fall-no-spin {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <label for="speed">Speed:</label>
+        <input type="range" id="speed" min="1" max="10" value="5">
+        <label for="density">Density:</label>
+        <input type="range" id="density" min="1" max="10" value="5">
+        <button id="toggle-spin">Toggle Spin Effect</button>
+        <button onclick="NextPage()">Surprise For You ❤️</button>
+    </div>
+    <div id="title">i lobb you ❤️</div>
+    <div id="photo-container"></div>
+    <audio id="audioPlayer" loop>
+        <source src="./images/metro.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+             const audio = document.getElementById('audioPlayer');
+        const message = document.getElementById('message');
+        const statusIndicator = document.getElementById('statusIndicator');
+        let isPlaying = false;
+
+        // Function to attempt autoplay
+        function attemptAutoplay() {
+            audio.play()
+                .then(() => {
+                    isPlaying = true;
+                    statusIndicator.classList.add('playing');
+                    statusIndicator.classList.remove('paused');
+                })
+                .catch((error) => {
+                    // Autoplay was prevented
+                    console.log("Autoplay prevented. Waiting for user interaction.");
+                    message.classList.add('show');
+                    statusIndicator.classList.add('paused');
+                });
+        }
+
+        // Attempt autoplay when the page loads
+        window.onload = attemptAutoplay;
+
+        // Click anywhere to play/pause
+       
+        const photoContainer = document.getElementById('photo-container');
+        const speedControl = document.getElementById('speed');
+        const densityControl = document.getElementById('density');
+        const toggleSpinButton = document.getElementById('toggle-spin');
+        const photoUrls = [
+            './images/sp-1.jpg',
+            './images/sp-2.jpg',
+            './images/sp-3.jpg',
+            './images/sp-4.jpg',
+            './images/sp-5.jpg',
+            './images/sp-6.jpg',
+            './images/sp-7.jpg',
+            './images/sp-8.jpg',
+            './images/sp-9.jpg',
+            './images/sp-10.jpg',
+            './images/sp-11.jpg',
+            './images/sp-12.jpg',
+            './images/sp-13.jpg',
+            './images/sp-14.jpg',
+            './images/sp-15.jpg',
+            './images/sp-16.jpg',
+            './images/sp-17.png',
+        ];
+
+        let speed = 5;
+        let density = 5;
+        let spinEnabled = false;
+
+        function createPhoto() {
+            const img = document.createElement('img');
+            img.src = photoUrls[Math.floor(Math.random() * photoUrls.length)];
+            img.classList.add('photo');
+            img.style.left = Math.random() * window.innerWidth + 'px';
+            img.style.animationDuration = (10 - speed) + 2 + 's'; // Faster for higher speed values
+
+            if (spinEnabled) {
+                img.style.animationName = 'fall';
+            } else {
+                img.style.animationName = 'fall-no-spin';
+            }
+
+            photoContainer.appendChild(img);
+
+            setTimeout(() => {
+                img.remove();
+            }, (10 - speed + 2) * 1000); // Remove photo after animation ends
+        }
+
+        function startRain() {
+            const interval = 1000 / density; // Adjust density
+            setInterval(createPhoto, interval);
+        }
+        
+        function NextPage() {
+    window.location.href = './end.html'; // Replace with your actual page link
+}
+
+        speedControl.addEventListener('input', () => {
+            speed = speedControl.value;
+        });
+
+        densityControl.addEventListener('input', () => {
+            density = densityControl.value;
+            clearInterval(rainInterval);
+            startRain();
+        });
+
+        toggleSpinButton.addEventListener('click', () => {
+            spinEnabled = !spinEnabled;
+            toggleSpinButton.textContent = spinEnabled ? 'Disable Spin Effect' : 'Enable Spin Effect';
+        });
+
+        let rainInterval = startRain();
+    </script>
+</body>
+</html>

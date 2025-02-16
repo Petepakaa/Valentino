@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('./images/starsfinal.jpg') no-repeat center center;
+            background-size: cover;
+            /* Adding a dark overlay to make text more readable */
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+            }
+        }
+        
+        .stars {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: transparent;
+            box-shadow: 1744px 122px #FFF,134px 1321px #FFF,1892px 1745px #FFF,
+                       1844px 842px #FFF,1012px 1219px #FFF,1199px 1625px #FFF,
+                       560px 1220px #FFF,687px 1004px #FFF,1589px 1494px #FFF,
+                       1190px 1923px #FFF,1054px 1532px #FFF,1298px 1518px #FFF,
+                       1082px 1020px #FFF,1595px 1986px #FFF,1822px 1940px #FFF,
+                       1402px 1504px #FFF,1772px 1106px #FFF,1090px 1845px #FFF,
+                       1593px 1456px #FFF,1166px 347px #FFF,1073px 1457px #FFF,
+                       800px 500px #FFF,400px 898px #FFF,1310px 1200px #FFF,
+                       820px 860px #FFF,300px 1250px #FFF,1550px 1500px #FFF,
+                       900px 1000px #FFF,1200px 1100px #FFF,1650px 1300px #FFF,
+                       750px 950px #FFF,1100px 1400px #FFF,1450px 1600px #FFF,
+                       650px 1150px #FFF,1000px 1300px #FFF,1350px 1700px #FFF,
+                       550px 1050px #FFF,950px 1200px #FFF,1250px 1800px #FFF,
+                       450px 950px #FFF,850px 1100px #FFF,1150px 1900px #FFF;
+            animation: animateStar 12s linear infinite;
+        }
+        
+        @keyframes animateStar {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-2000px);
+            }
+        }
+        
+        .text-container {
+            position: fixed;
+            top: 28%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            perspective: 500px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+        
+        .scrolling-text {
+            color: #1a95e2;
+            font-family: Arial, sans-serif;
+            font-size: 10em;
+            text-align: center;
+            transform-origin: 50% 100%;
+            transform: rotateX(25deg) translateZ(0);
+            opacity: 0;
+            transition: transform 2s, opacity 2s;
+            width: 80%;
+            margin: 0 auto;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%) rotateX(25deg) translateZ(0);
+            text-shadow: 0 0 10px rgba(255, 232, 31, 0.5);
+        }
+        
+        .scrolling-text.active {
+            opacity: 1;
+            transform: translateX(-50%) rotateX(25deg) translateZ(-1500px);
+        }
+
+        /* Adding an overlay to enhance text readability */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        #audioPlayer {
+            display: none; /* Hide the audio player */
+        }
+
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+
+        .status-indicator.playing {
+            background: #4CAF50;
+        }
+
+        .status-indicator.paused {
+            background: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hidden audio player -->
+    <audio id="audioPlayer" loop>
+        <source src="./images/CreditMusic.mpeg" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Status indicator -->
+    <div class="status-indicator" id="statusIndicator"></div>
+
+    <!--main code-->
+    <div class="space-background"></div>
+    <div class="overlay"></div>
+    <div class="stars"></div>
+    <div class="text-container">
+        <div class="scrolling-text"></div>
+    </div>
+
+    <script>
+        //music settings
+        const audio = document.getElementById('audioPlayer');
+        const statusIndicator = document.getElementById('statusIndicator');
+        let isPlaying = false;
+
+        // Function to attempt autoplay
+        function attemptAutoplay() {
+            audio.play()
+                .then(() => {
+                    isPlaying = true;
+                    statusIndicator.classList.add('playing');
+                    statusIndicator.classList.remove('paused');
+                })
+                .catch((error) => {
+                    console.log("Autoplay prevented. Waiting for user interaction.");
+                    statusIndicator.classList.add('paused');
+                });
+        }
+
+        // Attempt autoplay when the page loads
+        window.onload = attemptAutoplay;
+
+        // Click anywhere to play/pause
+        document.addEventListener('click', function () {
+            if (isPlaying) {
+                audio.pause();
+                statusIndicator.classList.remove('playing');
+                statusIndicator.classList.add('paused');
+            } else {
+                audio.play();
+                statusIndicator.classList.add('playing');
+                statusIndicator.classList.remove('paused');
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // main settings
+        const texts = [
+            "Directed by\nGeorge Lucas",
+            "Just Kidding...",
+            "Made by \nPratik & Joshin",
+            "A lightpix studios work",
+            "Bye"
+        ];
+        
+        let currentIndex = 0;
+        const textElement = document.querySelector('.scrolling-text');
+        
+        function showNextText() {
+            // Replace \n with <br> for HTML line breaks
+            textElement.innerHTML = texts[currentIndex].replace(/\n/g, '<br>');
+            textElement.classList.remove('active');
+            
+            // Force reflow
+            void textElement.offsetWidth;
+            
+            textElement.classList.add('active');
+            
+            // Schedule next text after current animation completes
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % texts.length;
+                // Only call showNextText if we haven't shown all texts
+                if (currentIndex < texts.length) {
+                    showNextText();
+                }
+            }, 4000); // Match this with your CSS transition duration
+        }
+        
+        // Start the text animation when the page loads
+        window.addEventListener('load', () => {
+            showNextText();
+        });
+    </script>
+</body>
+</html>

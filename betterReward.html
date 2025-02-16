@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Valentine's Day Saumya</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'sans-serif', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            color: #fffefe;
+            line-height: 1.6;
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('./images/spiderman.jpg');
+            background-size: cover;
+            transform-origin: center center;
+            z-index: -1;
+            filter: brightness(0.6);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            color: #ff4d6d;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #fbf8f9;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .message-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 5rem;
+            margin-bottom: 4rem;
+            max-width: 850px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 5rem;
+        }
+
+        .message-card {
+            background: rgba(255, 255, 255, 0.147);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.8s ease-out forwards;
+            backdrop-filter: blur(5px);
+            max-width: 250px;
+            margin: 0 auto;
+        }
+
+        .message-card img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards 0.5s;
+        }
+
+        .message-card h2 {
+            color: #f4f2f3;
+            margin-bottom: 0.8rem;
+            font-size: 1.5rem;
+        }
+
+        .message-card p {
+            color: #e2dede;
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+        }
+
+        .cute-button {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(45deg, #8f40de, #75e6ff);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cute-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: float 6s ease-in infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(20px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-hearts" id="hearts-container"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1>Happy Valentine's Day Saumya! ❤️</h1>
+            <p>Warm and strong huggies incoming for my baby...</p>
+        </header>
+
+        <div class="message-grid">
+            <div class="message-card">
+                <img src="./images/concert.jpg" alt="Love message 1">
+                <h2>Concert with me</h2>
+                <p>Because music with you is therapy.</p>
+                <button onclick="goToCAS(event)" class="cute-button">Cigrettes After Sex 🚬</button>
+                <button onclick="goToSpoti(event)" class="cute-button">Our Playlist 🎵</button>
+                <button onclick="goToSpecial(event)" class="cute-button">Surprise For You ❤️</button>
+            </div>
+
+            <div class="message-card">
+                <img src="./images/console.png" alt="Love message 2">
+                <h2>Gaming & Puzzle</h2>
+                <p>Lazy evening demands lazy gaming bubu.</p>
+                <button onclick="goToGame(event)" class="cute-button">Let us Play🎮</button>
+                <button onclick="goToNyan(event)" class="cute-button"> Do not press🐕</button>
+            </div>
+
+            <div class="message-card">
+                <img src="./images/gazzing.jpg" alt="Love message 3">
+                <h2>Night Gazzing</h2>
+                <p>Because you're my astronaut.</p>
+                <button onclick="goToStar(event)" class="cute-button">Let's watch✨</button>
+            </div>
+
+            <div class="message-card">
+                <img src="./images/magicbox.png" alt="Magic Box">
+                <h2>Magic Box</h2>
+                <p>Hmm, I wonder what's inside.</p>
+                <button onclick="Rain(event)" class="cute-button">Uncover the Mystery ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 3 + 's';
+            heart.style.opacity = Math.random() * 0.5 + 0.5;
+            document.getElementById('hearts-container').appendChild(heart);
+
+            heart.addEventListener('animationend', () => {
+                heart.remove();
+            });
+        }
+
+        setInterval(createHeart, 300);
+
+        function createHearts(e) {
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            for (let i = 0; i < 5; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.style.position = 'fixed';
+                heart.style.left = x + 'px';
+                heart.style.top = y + 'px';
+                heart.style.pointerEvents = 'none';
+                heart.style.animation = `float ${Math.random() * 2 + 1}s ease-out`;
+                document.body.appendChild(heart);
+                
+                setTimeout(() => heart.remove(), 3000);
+            }
+        }
+
+        function goToGame(e) {
+            createHearts(e); // Create hearts animation
+            setTimeout(() => {
+                window.location.href = 'mini.html'; // Navigate to game page after hearts animation
+            }, 500);
+        }
+        
+        function goToStar(e){
+            createHearts(e); // Create hearts animation
+            setTimeout(() => {
+                window.location.href = 'https://stellarium-web.org/'; // Navigate to game page after hearts animation
+            }, 500);    
+
+        }
+
+        function goToNyan(e){
+            createHearts(e); // Create hearts animation
+            setTimeout(() => {
+                window.location.href = 'https://www.nyan.cat/index.php?cat=fiesta'; // Navigate to game page after hearts animation
+            }, 500);
+        }  
+        
+        function goToCAS(e){
+            createHearts(e); // Create hearts animation
+            setTimeout(() => {
+                window.location.href = 'https://drive.google.com/file/d/1eID3urW9fM0-qK9uPnDE3VUSUVhWoipj/view?usp=sharing'; // Navigate to game page after hearts animation
+            }, 500);
+        } 
+
+        function goToSpoti(e){
+            createHearts(e); // Create hearts animation
+            setTimeout(() => {
+                window.location.href = 'https://open.spotify.com/playlist/4enSjFM7asAbUFn1eABO7k?si=PDPPC11TRkizttwpoHghZA'; // Navigate to game page after hearts animation
+            }, 500);
+        } 
+
+        function goToSpecial(e){
+            createHearts(e); // Create hearts animation
+            setTimeout(() => {
+                window.location.href = 'https://www.youtube.com/watch?v=ce3-XejE6JQ'; // Navigate to game page after hearts animation
+            }, 500);
+        }  
+        function Rain(e){
+            createHearts(e); // Create hearts animation
+            setTimeout(() => {
+                window.location.href = './photoRain5.html'; // Navigate to game page after hearts animation
+            }, 500);
+        }  
+
+    </script>
+</body>
+</html>

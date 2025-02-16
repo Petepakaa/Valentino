@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Adventure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ff758f;
+            --background: #fff0f3;
+            --text: #2c1810;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        .love-meter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .meter-fill {
+            width: 150px;
+            height: 20px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .meter-value {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0;
+            transition: width 0.5s ease;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section h1 {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .section.active h1 {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 2rem auto;
+        }
+
+        .interactive-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .interactive-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(255, 77, 109, 0.2);
+        }
+
+        .interactive-card.revealed {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .interactive-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .love-quest {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            margin: 2rem auto;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.5s ease;
+        }
+
+        .love-quest.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .quest-button {
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .quest-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3);
+        }
+
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 2rem;
+            animation: float 6s ease-in infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .achievement {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            opacity: 0;
+            transition: all 0.5s ease;
+            z-index: 1000;
+        }
+
+        .achievement.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar"></div>
+    </div>
+
+    <div class="love-meter">
+        <h3>Love Meter ❤️</h3>
+        <div class="meter-fill">
+            <div class="meter-value"></div>
+        </div>
+        <p>Progress: <span id="love-percentage">0</span>%</p>
+    </div>
+
+    <div class="floating-hearts" id="hearts-container"></div>
+
+    <section class="section" id="welcome">
+        <h1>Welcome to Love Adventure! ❤️</h1>
+        <div class="love-quest active">
+            <h2>Begin Your Journey</h2>
+            <p>Unlock romantic achievements and spread love through interactive challenges!</p>
+            <button class="quest-button" onclick="startAdventure()">Start Adventure</button>
+        </div>
+    </section>
+
+    <section class="section" id="challenges">
+        <h1>Love Challenges</h1>
+        <div class="card-container">
+            <div class="interactive-card" onclick="completeChallenge(this)">
+                <img src="/api/placeholder/400/400" alt="Challenge 1">
+                <h3>Heart Collector</h3>
+                <p>Catch floating hearts to increase your love meter!</p>
+                <button class="quest-button">Accept Challenge</button>
+            </div>
+            <div class="interactive-card" onclick="completeChallenge(this)">
+                <img src="/api/placeholder/400/400" alt="Challenge 2">
+                <h3>Love Message</h3>
+                <p>Create and share a heartfelt message!</p>
+                <button class="quest-button">Accept Challenge</button>
+            </div>
+            <div class="interactive-card" onclick="completeChallenge(this)">
+                <img src="/api/placeholder/400/400" alt="Challenge 3">
+                <h3>Secret Admirer</h3>
+                <p>Send anonymous love notes!</p>
+                <button class="quest-button">Accept Challenge</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="achievement" id="achievement">
+        <span>🏆</span>
+        <div>
+            <h3>Achievement Unlocked!</h3>
+            <p>Love Level Increased!</p>
+        </div>
+    </div>
+
+    <script>
+        let loveProgress = 0;
+        let challengesCompleted = 0;
+
+        function updateProgress() {
+            const progressBar = document.querySelector('.progress-bar');
+            const meterValue = document.querySelector('.meter-value');
+            const lovePercentage = document.getElementById('love-percentage');
+            
+            progressBar.style.width = `${loveProgress}%`;
+            meterValue.style.width = `${loveProgress}%`;
+            lovePercentage.textContent = Math.round(loveProgress);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 3 + 's';
+            heart.style.opacity = Math.random() * 0.5 + 0.5;
+            document.getElementById('hearts-container').appendChild(heart);
+
+            heart.addEventListener('animationend', () => {
+                heart.remove();
+            });
+        }
+
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.top = Math.random() * window.innerHeight + 'px';
+                confetti.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                document.body.appendChild(confetti);
+
+                const animation = confetti.animate([
+                    { transform: 'translateY(0) rotate(0)', opacity: 1 },
+                    { transform: `translateY(-${window.innerHeight}px) rotate(${Math.random() * 520}deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 2000 + 1000,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                });
+
+                animation.onfinish = () => confetti.remove();
+            }
+        }
+
+        function showAchievement(message) {
+            const achievement = document.getElementById('achievement');
+            achievement.querySelector('p').textContent = message;
+            achievement.classList.add('show');
+            
+            setTimeout(() => {
+                achievement.classList.remove('show');
+            }, 3000);
+        }
+
+        function completeChallenge(card) {
+            if (!card.classList.contains('revealed')) {
+                card.classList.add('revealed');
+                loveProgress += 20;
+                challengesCompleted++;
+                updateProgress();
+                createConfetti();
+                showAchievement(`Challenge ${challengesCompleted} Completed!`);
+
+                if (challengesCompleted >= 3) {
+                    setTimeout(() => {
+                        showAchievement('All Challenges Completed! You're Amazing! ❤️');
+                        createConfetti();
+                    }, 3500);
+                }
+            }
+        }
+
+        function startAdventure() {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('active');
+            });
+            
+            document.querySelectorAll('.interactive-card').forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'scale(1)';
+                }, index * 200);
+            });
+
+            showAchievement('Adventure Started! Complete the challenges!');
+        }
+
+        // Create hearts periodically
+        setInterval(createHeart, 500);
+
+        // Intersection Observer for sections
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Initial progress update
+        updateProgress();
+    </script>
+</body>
+</html>

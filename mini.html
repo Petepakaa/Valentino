@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Mini-Games</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ff758f;
+            --background: #fff0f3;
+            --text: #2c1810;
+        }
+
+        body {
+            
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: url('./images/mini.png'); /* Add this line */
+            background-size: cover; /* Add this line */
+            background-position: center; /* Add this line */
+            background-attachment: fixed; 
+        
+        }
+
+        .game-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 3rem;
+        }
+
+        .stats-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-height: 400px;
+            position: relative;
+        }
+
+        .heart-catcher {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            display: none;
+        }
+
+        .player {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .falling-heart {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: fall linear;
+        }
+
+        @keyframes fall {
+            from { top: -20px; }
+            to { top: 400px; }
+        }
+
+        .memory-game {
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            perspective: 1000px;
+        }
+
+        .memory-card {
+            height: 120px; /* Increased height for better image display */
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+            cursor: pointer;
+        }
+
+        .memory-card.flip {
+            transform: rotateY(180deg);
+        }
+
+        .memory-card .front,
+        .memory-card .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            padding: 0.5rem;
+            border-radius: 10px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: white;
+        }
+
+        .memory-card .front {
+            transform: rotateY(180deg);
+        }
+
+        .memory-card .front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .memory-card .back {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 2rem;
+            border: none;
+        }
+
+        .typing-game {
+            display: none;
+            text-align: center;
+        }
+
+        .typing-text {
+            font-size: 1.5rem;
+            margin: 2rem 0;
+            color: var(--primary);
+        }
+
+        .typing-input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.2rem;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .game-button {
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .game-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .game-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .menu {
+            text-align: center;
+        }
+
+        .menu h1 {
+            color: var(--primary);
+            margin-bottom: 2rem;
+        }
+
+        .achievement {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: all 0.5s ease;
+            z-index: 1000;
+        }
+
+        .achievement.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <audio id="backgroundMusictwo">
+        <source src="./images/You've Got a Friend in Me.mp3" type="audio/mp3">
+    </audio>
+
+    <audio id="backgroundMusic">
+        <source src="./images/gamesong1.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="stats-bar">
+        <div class="stat">
+            <span>❤️ Score:</span>
+            <span id="score">0</span>
+        </div>
+        <div class="stat">
+            <span>🏆 Level:</span>
+            <span id="level">1</span>
+        </div>
+        <div class="stat">
+            <span>⭐ Stars:</span>
+            <span id="stars">0</span>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div class="game-area">
+            <div class="menu" id="menu">
+                <h1>Valentine's Mini-Games</h1>
+                <p>Complete all games to win special rewards!</p>
+                <button class="game-button" onclick="startGame('heartCatcher')">Heart Catcher</button>
+                <button class="game-button" onclick="startGame('memoryGame')">Grandy Verse</button>
+                <button class="game-button" onclick="startGame('typingGame')">Battle of lyrics</button>
+            </div>
+
+            <div id="heartCatcher" class="heart-catcher">
+                <div class="player">🤍</div>
+            </div>
+
+            <div id="memoryGame" class="memory-game"></div>
+
+            <div id="typingGame" class="typing-game">
+                
+                <div class="typing-text"></div>
+                <input type="text" class="typing-input" placeholder="Type the love message...">
+                <div class="typing-stats"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="achievement" id="achievement">
+        <h3>Achievement Unlocked!</h3>
+        <p></p>
+    </div>
+
+    <script>
+        let score = 0;
+        let level = 1;
+        let stars = 0;
+        
+        // Game states
+        let currentGame = null;
+        let gameInterval = null;
+
+        const loveMessages = [
+            "cant take my eyes off you",
+            "...",
+            "...",
+            "...",
+            "...",
+            "...",
+            "...",
+            "...",
+            "...",
+            "...",
+            "...",
+            "...",
+            "...",
+            "...",
+            "...",
+            "i love you baby",
+            "i need you baby",
+            "to warm the lonely night",
+            "i love you baby",
+            "trust in me when i say",
+            "oh pretty baby",
+            "...",
+            "...",
+            "let me love you",
+            "baby",
+            "let me love you",
+            "...."
+        ];
+
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('level').textContent = level;
+            document.getElementById('stars').textContent = stars;
+        }
+
+        function showAchievement(message) {
+            const achievement = document.getElementById('achievement');
+            achievement.querySelector('p').textContent = message;
+            achievement.classList.add('show');
+            
+            setTimeout(() => {
+                achievement.classList.remove('show');
+            }, 3000);
+        }
+
+        // Heart Catcher Game
+        function startHeartCatcher() {
+            const gameArea = document.getElementById('heartCatcher');
+            const player = gameArea.querySelector('.player');
+            let playerX = gameArea.offsetWidth / 2;
+            
+            function movePlayer(e) {
+                const rect = gameArea.getBoundingClientRect();
+                playerX = Math.max(25, Math.min(gameArea.offsetWidth - 25, e.clientX - rect.left));
+                player.style.left = playerX + 'px';
+            }
+
+            function createHeart() {
+                const heart = document.createElement('div');
+                heart.className = 'falling-heart';
+                heart.textContent = '❤️';
+                heart.style.left = Math.random() * (gameArea.offsetWidth - 20) + 'px';
+                heart.style.animationDuration = '3s';
+                gameArea.appendChild(heart);
+
+                heart.addEventListener('animationend', () => {
+                    heart.remove();
+                    score = Math.max(0, score - 5);
+                    updateStats();
+                });
+            }
+
+            function checkCollision() {
+                const hearts = gameArea.querySelectorAll('.falling-heart');
+                const playerRect = player.getBoundingClientRect();
+
+                hearts.forEach(heart => {
+                    const heartRect = heart.getBoundingClientRect();
+                    if (heartRect.bottom >= playerRect.top &&
+                        heartRect.top <= playerRect.bottom &&
+                        heartRect.right >= playerRect.left &&
+                        heartRect.left <= playerRect.right) {
+                        heart.remove();
+                        score += 10;
+                        updateStats();
+                        if (score >= 100) {
+                            endGame(true);
+                        }
+                    }
+                });
+            }
+
+            gameArea.addEventListener('mousemove', movePlayer);
+            gameInterval = setInterval(createHeart, 1000);
+            setInterval(checkCollision, 100);
+        }
+
+         // Memory Game
+         function startMemoryGame() {
+            const gameArea = document.getElementById('memoryGame');
+            const audio = document.getElementById('backgroundMusictwo');
+            audio.play();
+            // Define image pairs for the memory game
+            const images = [
+                './images/grandy1.jpg',
+                './images/grandy2.jpg',
+                './images/grandy3.jpg',
+                './images/grandy4.jpg',
+                './images/grandy5.jpg',
+                './images/grandy6.jpg',
+                './images/grandy7.jpg',
+                './images/grandy8.jpg'
+            ];
+            const gameImages = [...images, ...images];
+            let flippedCards = [];
+            let matchedPairs = 0;
+
+            // Shuffle array
+            gameImages.sort(() => Math.random() - 0.5);
+
+            // Create cards
+            gameImages.forEach((imgSrc, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.innerHTML = `
+                    <div class="front">
+                        <img src="${imgSrc}" alt="Valentine card ${index}">
+                    </div>
+                    <div class="back">❤️</div>
+                `;
+                card.dataset.image = imgSrc;
+                card.addEventListener('click', flipCard);
+                gameArea.appendChild(card);
+            });
+
+            function flipCard() {
+                if (flippedCards.length === 2) return;
+                if (this.classList.contains('flip')) return;
+
+                this.classList.add('flip');
+                flippedCards.push(this);
+
+                if (flippedCards.length === 2) {
+                    setTimeout(checkMatch, 500);
+                }
+            }
+
+            function checkMatch() {
+                const [card1, card2] = flippedCards;
+                if (card1.dataset.image === card2.dataset.image) {
+                    matchedPairs++;
+                    score += 20;
+                    showAchievement("Match found! +20 points");
+                    if (matchedPairs === images.length) {
+                        setTimeout(() => endGame(true), 500);
+                    }
+                } else {
+                    setTimeout(() => {
+                        card1.classList.remove('flip');
+                        card2.classList.remove('flip');
+                    }, 500);
+                    score = Math.max(0, score - 5);
+                    showAchievement("Not a match! -5 points");
+                }
+                flippedCards = [];
+                updateStats();
+            }
+        }
+        function endGame(success) {
+            const audio = document.getElementById('backgroundMusictwo');
+            audio.pause();
+            audio.currentTime = 0;
+            
+            if (gameInterval) {
+                clearInterval(gameInterval);
+                gameInterval = null;
+            }
+
+            if (success) {
+                level++;
+                stars++;
+                showAchievement(`Completed ${currentGame}! +1 Star!`);
+            }
+            document.getElementById('heartCatcher').innerHTML = '<div class="player">🤍</div>';
+            document.getElementById('memoryGame').innerHTML = '';
+            document.getElementById('typingGame').querySelector('.typing-input').value = '';
+
+            // Show menu
+            document.getElementById('menu').style.display = 'block';
+            document.getElementById('heartCatcher').style.display = 'none';
+            document.getElementById('memoryGame').style.display = 'none';
+            document.getElementById('typingGame').style.display = 'none';
+
+            updateStats();
+        }
+
+
+
+        // Typing Game
+        function startTypingGame() {
+    const gameArea = document.getElementById('typingGame');
+    const textDisplay = gameArea.querySelector('.typing-text');
+    const input = gameArea.querySelector('.typing-input');
+    const stats = gameArea.querySelector('.typing-stats');
+    const audio = document.getElementById('backgroundMusic');
+    let currentMessageIndex = 0;
+    let startTime;
+
+    // Start playing music automatically
+    audio.play();
+
+    function nextMessage() {
+        if (currentMessageIndex >= loveMessages.length) {
+            audio.pause(); // Stop music when game ends
+            audio.currentTime = 0; // Reset audio to beginning
+            endGame(true);
+            return;
+        }
+        textDisplay.textContent = loveMessages[currentMessageIndex];
+        input.value = '';
+        startTime = Date.now();
+    }
+
+    input.addEventListener('input', () => {
+        if (input.value === loveMessages[currentMessageIndex]) {
+            const timeTaken = (Date.now() - startTime) / 1000;
+            const wordsPerMinute = (loveMessages[currentMessageIndex].length / 5) / (timeTaken / 60);
+            score += Math.floor(wordsPerMinute);
+            updateStats();
+            currentMessageIndex++;
+            nextMessage();
+        }
+    });
+
+    nextMessage();
+}
+
+        function startGame(gameType) {
+            // Hide menu and all game areas
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('heartCatcher').style.display = 'none';
+            document.getElementById('memoryGame').style.display = 'none';
+            document.getElementById('typingGame').style.display = 'none';
+
+            // Show and start selected game
+            currentGame = gameType;
+            switch(gameType) {
+                case 'heartCatcher':
+                    document.getElementById('heartCatcher').style.display = 'block';
+                    startHeartCatcher();
+                    break;
+                case 'memoryGame':
+                    document.getElementById('memoryGame').style.display = 'grid';
+                    startMemoryGame();
+                    break;
+                case 'typingGame':
+                    document.getElementById('typingGame').style.display = 'block';
+                    startTypingGame();
+                    break;
+            }
+        }
+
+        function endGame(success) {
+            const audio = document.getElementById('backgroundMusic');
+    audio.pause();
+    audio.currentTime = 0;
+    
+            
+            if (gameInterval) {
+                clearInterval(gameInterval);
+                gameInterval = null;
+            }
+
+            if (success) {
+                level++;
+                stars++;
+                showAchievement(`Completed ${currentGame}! +1 Star!`);
+            }
+
+            // Reset game areas
+            document.getElementById('heartCatcher').innerHTML = '<div class="player">🤍</div>';
+            document.getElementById('memoryGame').innerHTML = '';
+            document.getElementById('typingGame').querySelector('.typing-input').value = '';
+
+            // Show menu
+            document.getElementById('menu').style.display = 'block';
+            document.getElementById('heartCatcher').style.display = 'none';
+            document.getElementById('memoryGame').style.display = 'none';
+            document.getElementById('typingGame').style.display = 'none';
+
+            updateStats();
+        }
+
+        // Initialize stats
+        updateStats();
+    </script>
+</body>
+</html>
